@@ -142,7 +142,7 @@ Hosted API limits apply to compile requests. Most inference should run locally t
 
 ## CLI
 
-Commands: `paw compile --spec "..." --json`, `paw run --program <id> --input "..."`, `paw info <id>`, `paw rename <id> <slug>`, `paw login`. All support `--json` for structured output.
+Commands: `paw compile --spec "..." --json`, `paw run --program <id> --input "..."`, `paw info <id>`, `paw rename <id> <slug>`, `paw login`. All support `--json` for structured output. Omit `--input` value to read from stdin (e.g. `echo "text" | paw run --program <id> --input`).
 
 ## Versioning
 

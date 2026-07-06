@@ -35,12 +35,14 @@ Run inference locally against a compiled program.
 
 ```bash
 paw run --program <id_or_slug> --input "your text" [--max-tokens 512] [--temperature 0.0] [--json]
+# or pipe input from stdin:
+echo "your text" | paw run --program <id_or_slug> --input
 ```
 
 | Option | Description |
 |--------|-------------|
 | `--program` | Program hash ID, slug (e.g. `da03/my-classifier`), or official name (e.g. `email-triage`). |
-| `--input` | Input text for the program. |
+| `--input` | Input text for the program. Omit the value to read from stdin. |
 | `--max-tokens` | Maximum tokens to generate (default: 512). |
 | `--temperature` | Sampling temperature (default: 0.0). |
 | `--verbose` | Print llama.cpp debug output. |
@@ -82,6 +84,8 @@ If `key` is provided, saves it directly. If omitted, opens the browser to genera
 ```bash
 PROGRAM_ID=$(paw compile --spec "Classify urgency" --json | jq -r '.program_id')
 paw run --program "$PROGRAM_ID" --input "Please review by EOD" --json
+# or pipe input:
+echo "Please review by EOD" | paw run --program "$PROGRAM_ID" --input --json
 ```
 
 ## Related

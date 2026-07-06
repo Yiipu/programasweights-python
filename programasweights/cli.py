@@ -62,6 +62,7 @@ def cmd_compile(args):
     ref = program.slug or program.id
     print(f"\nTo run locally:")
     print(f"  paw run --program \"{ref}\" --input \"your input here\"")
+    print(f"  echo \"your input here\" | paw run --program \"{ref}\" --input")
     print(f"\nOr in Python:")
     print(f"  import programasweights as paw")
     print(f"  fn = paw.function(\"{ref}\")")
