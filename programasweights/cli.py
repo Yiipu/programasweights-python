@@ -4,7 +4,7 @@ ProgramAsWeights CLI.
 
 Usage:
     paw compile --spec "..."       Compile a spec on the server
-    paw run --program <id> --input "..."   Run locally (or add --remote)
+    paw run --program <id> --input "..."   Run locally (omit --input to read stdin)
     paw rename <program> <slug>    Set or change a program's slug
     paw info <program>             Show program metadata
     paw login [key]                Save API key for authentication
@@ -101,6 +101,10 @@ def cmd_run(args):
                 "--interpreter is only valid together with --base."
             )
 
+    input_text = args.input
+    if input_text is None:
+        input_text = sys.stdin.read()
+
     load_kwargs = dict(
         verbose=args.verbose, offline=offline, interpreter=interpreter,
     )
@@ -115,7 +119,7 @@ def cmd_run(args):
             temperature = 0.0
     fn = paw.function(None if base_mode else program, **load_kwargs)
     try:
-        result = fn(args.input, max_tokens=max_tokens, temperature=temperature)
+        result = fn(input_text, max_tokens=max_tokens, temperature=temperature)
     finally:
         if remote:
             fn.close()
@@ -127,7 +131,7 @@ def cmd_run(args):
                     "mode": "base" if base_mode else "program",
                     "program": program,
                     "interpreter": getattr(fn, "interpreter", interpreter),
-                    "input": args.input,
+                    "input": input_text,
                     "output": result,
                 }
             )
@@ -235,7 +239,7 @@ def main():
         choices=("Qwen/Qwen3-0.6B", "gpt2"),
         help="Base interpreter; only valid with --base",
     )
-    p.add_argument("--input", required=True, help="Input text")
+    p.add_argument("--input", nargs="?", default=None, help="Input text (omit to read from stdin)")
     p.add_argument("--max-tokens", type=int, default=None)
     p.add_argument("--temperature", type=float, default=None)
     p.add_argument("--remote", action="store_true", help="Use hosted inference")
