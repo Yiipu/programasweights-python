@@ -38,6 +38,9 @@ Add `--remote` for hosted inference without downloading local model assets.
 ```bash
 paw run --program <id_or_slug> --input "your text" [--offline] [--json]
 
+# Pipe input from stdin
+echo "your text" | paw run --program <id_or_slug> --input
+
 # Optional hosted inference
 paw run --program email-triage --input "Urgent: the server is down!" --remote --json
 
@@ -50,7 +53,7 @@ paw run --base --interpreter gpt2 --input "raw prompt" [--offline] [--json]
 | `--program` | Program hash ID, slug (e.g. `da03/my-classifier`), or official name (e.g. `email-triage`). |
 | `--base` | Select adapter-free base mode. Mutually exclusive with `--program` and requires `--interpreter`. |
 | `--interpreter` | Base interpreter: `Qwen/Qwen3-0.6B` or `gpt2`. Only valid with `--base`. |
-| `--input` | Input text for the program. |
+| `--input` | Input text for the program. Omit the value to read from stdin. |
 | `--max-tokens` | Maximum tokens to generate. Local default: 512. Remote inference uses the server default when omitted. |
 | `--temperature` | Sampling temperature. Local default: 0.0. Remote inference uses the server default when omitted. |
 | `--verbose` | Print llama.cpp debug output. |
@@ -102,6 +105,8 @@ If `key` is provided, saves it directly. If omitted, opens the browser to genera
 ```bash
 PROGRAM_ID=$(paw compile --spec "Classify urgency" --json | jq -r '.program_id')
 paw run --program "$PROGRAM_ID" --input "Please review by EOD" --json
+# or pipe input:
+echo "Please review by EOD" | paw run --program "$PROGRAM_ID" --input --json
 ```
 
 ## Related
