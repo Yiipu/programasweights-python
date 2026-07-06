@@ -4,7 +4,7 @@ ProgramAsWeights CLI.
 
 Usage:
     paw compile --spec "..."       Compile a spec on the server
-    paw run --program <id> --input "..."   Run a program locally
+    paw run --program <id> --input "..."   Run a program locally (omit --input to read from stdin)
     paw rename <program> <slug>    Set or change a program's slug
     paw info <program>             Show program metadata
     paw login [key]                Save API key for authentication
@@ -73,13 +73,17 @@ def cmd_run(args):
     import programasweights as paw
     _apply_auth_overrides(args)
 
+    input_text = args.input
+    if input_text is None:
+        input_text = sys.stdin.read()
+
     fn = paw.function(
         args.program, verbose=args.verbose,
     )
-    result = fn(args.input, max_tokens=args.max_tokens, temperature=args.temperature)
+    result = fn(input_text, max_tokens=args.max_tokens, temperature=args.temperature)
 
     if args.json:
-        print(json.dumps({"program": args.program, "input": args.input, "output": result}))
+        print(json.dumps({"program": args.program, "input": input_text, "output": result}))
     else:
         print(result)
     return 0
@@ -168,7 +172,7 @@ def main():
 
     p = sub.add_parser("run", help="Run a program locally via llama.cpp")
     p.add_argument("--program", required=True, help="Program name or ID")
-    p.add_argument("--input", required=True, help="Input text")
+    p.add_argument("--input", nargs="?", default=None, help="Input text (omit to read from stdin)")
     p.add_argument("--max-tokens", type=int, default=512)
     p.add_argument("--temperature", type=float, default=0.0)
     p.add_argument("--verbose", action="store_true")
